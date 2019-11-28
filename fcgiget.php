@@ -13,6 +13,11 @@ require 'src/Adoy/FastCGI/Client.php';
 
 use Adoy\FastCGI\Client;
 
+function dieExit1($message) {
+    print $message;
+    exit(1);
+}
+
 /**
  * Simple command line script to test communication with a FastCGI server
  *
@@ -21,7 +26,7 @@ use Adoy\FastCGI\Client;
  * @version     1.0
  */
 if (!isset($_SERVER['argc'])) {
-    die("Command line only\n");
+    dieExit1("Command line only\n");
 }
 if ($_SERVER['argc']<2) {
     echo "Usage: ".$_SERVER['argv'][0]."  URI\n\n";
@@ -34,16 +39,16 @@ if (preg_match('|^unix:(.*.sock)(/.*)$|', $_SERVER['argv'][1], $reg)) {
     $url  = parse_url($reg[2]);
     $sock = $reg[1];
     if (!file_exists($sock)) {
-        die("UDS $sock not found\n");
+        dieExit1("UDS $sock not found\n");
     } else if (!is_writable($sock)) {
-        die("UDS $sock is not writable\n");
+        dieExit1("UDS $sock is not writable\n");
     }
 } else {
     $url  = parse_url($_SERVER['argv'][1]);
     $sock = false;
 }
 if (!$url || !isset($url['path'])) {
-    die("Malformed URI");
+    dieExit1("Malformed URI");
 }
 
 $req = '/'.basename($url['path']);
